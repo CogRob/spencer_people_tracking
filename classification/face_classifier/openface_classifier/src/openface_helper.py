@@ -136,6 +136,71 @@ class OpenFaceAnotater(object):
         except:
             print('No labelsNum specified')
 
+    def predictWithLabel(self, rgbImg, bbs, multiple=False, scale=None):
+        annotatedImg = np.copy(rgbImg)
+        dot_prod_threshold_unknown = 0.6
+
+        # try:
+        reps = self.getRep(rgbImg, bbs, multiple, scale) #bbs is passed by reference
+        # print("reps: ", reps)
+        # if len(reps) > 1:
+            # print("List of faces in image from left to right")
+        identities = []
+        for r in reps:
+            rep = r[1].reshape(1, -1)
+            bbx = r[0]
+            bb = r[2] #bounding box
+            landmarks = r[3] #landmarks
+            start = time.time()
+            dist,ind = self.clf.kneighbors(rep)
+            
+            # Logic 1:
+            # #threshold logic on nearest neigbor distance
+            # if dist[0][0]>threshold_unknown:
+            #     # print ('Unknown')
+            #     person = 'Unknown'
+            # else:
+            #     person = self.le.inverse_transform(self.clf.predict(rep))[0]
+            #     # print (person)
+
+            #Logic
+            nn_product = np.vdot(rep,self.features[ind[0]])
+            print 'NN dot product',nn_product
+            print 'Nearest neigbor is',self.le.inverse_transform(self.clf.predict(rep))[0]
+            if nn_product>dot_prod_threshold_unknown:
+                person = self.le.inverse_transform(self.clf.predict(rep))[0]
+            else:
+                person = 'Unknown'
+            identities.append(person)
+
+            if self.args.verbose:
+                print("Prediction took {} seconds.".format(time.time() - start))
+                if multiple:
+                    print("Predict {} @ x={}".format(
+                        person,
+                        bbx))
+                else:
+                    print("Predict {}".format(
+                        person))
+            if isinstance(self.clf, GMM):
+                dist = np.linalg.norm(rep - self.clf.means_[maxI])
+                if self.args.verbose:
+                    print("  + Distance from the mean: {}".format(dist))
+
+            #code for annotated bounding box
+            bl = (bb.left(), bb.bottom())
+            tr = (bb.right(), bb.top())
+            cv2.rectangle(annotatedImg, bl, tr, color=(153, 255, 204),thickness=3)
+            for p in openface.AlignDlib.OUTER_EYES_AND_NOSE:
+                cv2.circle(annotatedImg, center=landmarks[p], radius=3,
+                               color=(102, 204, 255), thickness=-1)
+            cv2.putText(annotatedImg, person, (bb.left(), bb.top() - 10),
+                            cv2.FONT_HERSHEY_SIMPLEX, fontScale=0.75,
+                            color=(152, 255, 204), thickness=2)
+        # annotatedImgBgr = cv2.cvtColor(annotatedImg, cv2.COLOR_RGB2BGR)
+        return annotatedImg,identities
+
+
     def predict(self, rgbImg, bbs, multiple=False, scale=None):
         # bgrImg = img
         # rgbImg = cv2.cvtColor(bgrImg, cv2.COLOR_BGR2RGB)

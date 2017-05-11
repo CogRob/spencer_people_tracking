@@ -22,6 +22,8 @@ from spencer_tracking_msgs.msg import (
     DetectedPersons,
     TrackedPerson,
     TrackedPersons,
+    TrackIdentityAssociation,
+    TrackIdentityAssociations
     )
 
 import message_filters
@@ -29,7 +31,7 @@ import message_filters
 import spencer_detected_person_association
 
 # faceCascade = cv2.CascadeClassifier('/opt/ros/kinetic/share/OpenCV-3.2.0-dev/haarcascades/haarcascade_frontalface_default.xml')
-openface_anotater = None
+openface_annotater = None
 # faceCascade = cv2.CascadeClassifier('/usr/share/opencv/haarcascades/haarcascade_frontalface_default.xml')
 
 class image_converter:
@@ -37,6 +39,7 @@ class image_converter:
     def __init__(self):
         self.image_pub = rospy.Publisher('image_tracked', Image, queue_size=10)
         self.track_pub = rospy.Publisher('persons_tracked', TrackedPersons, queue_size=100)
+        self.track_identity_assoc_pub = rospy.Publisher('track_identity_assoc', TrackIdentityAssociations,queue_size=100)
 
         self.bridge = CvBridge()
 
@@ -91,10 +94,16 @@ class image_converter:
         if not trackLookups:
             print('No track.detection_id found in detected_persons.detections')
         else:
+            track_assocs = TrackIdentityAssociations()
+            track_assocs.header = tracked_persons.header
             for detection_id in trackLookups:
                 trackLookup = trackLookups[detection_id]
                 index = trackLookup['index']
                 track_id = trackLookup['track_id']
+
+                track_assoc = TrackIdentityAssociation()
+                track_assoc.track_id = track_id
+                track_assoc.detection_id = detection_id
 
                 print('detection_id: {} track_id: {}'.format(detection_id, track_id))
                 x = detections.pos_x[index]
@@ -108,8 +117,13 @@ class image_converter:
 
                 if cv_image_crop.shape[0]>0 and cv_image_crop.shape[1]>0:
                     cv_image_crop = cv2.cvtColor(cv_image_crop,cv2.COLOR_BGR2RGB)
-                    cv_image_crop = openface_anotater.predict(cv_image_crop, [], multiple=False, scale=None)
+                    # cv_image_crop = openface_annotater.predict(cv_image_crop, [], multiple=False, scale=None)
+                    cv_image_crop,identities = openface_annotater.predictWithLabel(cv_image_crop,[], multiple=False, scale=None)
+                    #identities has a single element
+                    person = identities[0]
+                    track_assoc.person_name = person
                     cv_image_crop = cv2.cvtColor(cv_image_crop,cv2.COLOR_RGB2BGR)
+                    track_assocs.tracks.append(track_assoc)
                 else:
                     return
                 # gray = cv2.cvtColor(cv_image_crop, cv2.COLOR_BGR2GRAY)
@@ -141,6 +155,7 @@ class image_converter:
                                            'bgr8'))
                 except CvBridgeError, e:
                     print(e)
+            self.track_identity_assoc_pub.publish(track_assocs)
 
     def track_sync_callback(
         self,
@@ -178,5 +193,5 @@ def main(args):
     cv2.destroyAllWindows()
 
 if __name__ == '__main__':
-    openface_anotater = OpenFaceAnotater(sys.argv)
+    openface_annotater = OpenFaceAnotater(sys.argv)
     main(sys.argv)
