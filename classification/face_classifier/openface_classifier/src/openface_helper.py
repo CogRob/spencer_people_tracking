@@ -82,12 +82,6 @@ class OpenFaceArgParser(argparse.ArgumentParser):
             type=str,
             help="Path to Features numpy.",
             default='/home/jaskaran/train_images/features.npy')
-        self.add_argument(
-            '--labelsNum',
-            type=str,
-            help='Path to labelsNum numpy',
-            default='/home/jaskaran/train_images/labelsNum.npy'
-            )
 
 class OpenFaceAnotater(object):
 
@@ -110,31 +104,30 @@ class OpenFaceAnotater(object):
             cuda=self.args.cuda)
 
         try:
-            self.load(self.args.classifierModel)
+            self.load_model(self.args.classifierModel)
         except:
             print("No classifierModel loaded")
-        self.load_features()
+        try:
+            self.load_features(self.args.features)
+        except:
+            print("No features loaded. Necessary for Nearest Neighbor")
 
         if self.args.verbose:
             print("Loading the dlib and OpenFace models took {} seconds.".format(
                 time.time() - start))
             start = time.time()
 
-    def load(self, classifierModel):
+    def load_model(self, classifierModel):
         with open(classifierModel, 'r') as f:
             (le, clf) = pickle.load(f)
         self.le = le
         self.clf = clf
 
-    def load_features(self):
+    def load_features(self, feature_path):
         try:
-            self.features = np.load(self.args.features)
+            self.features = np.load(feature_path)
         except:
             print('No feature file specified')
-        try:
-            self.labelsNum = np.load(self.args.labelsNum)
-        except:
-            print('No labelsNum specified')
 
     def predictWithLabel(self, rgbImg, bbs, multiple=False, scale=None):
         annotatedImg = np.copy(rgbImg)
