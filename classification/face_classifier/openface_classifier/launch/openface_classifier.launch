@@ -66,6 +66,11 @@
             <param name="labeled_tracks_topic" value="labeled_tracks" type="string"/>
             <param name="call_person_topic" value="call_person" type="string"/>
         </node>
+
+        <node name="classification_filter" type="classification_filter_node.py" pkg="openface_classifier" output="screen">
+            <param name="labeled_tracks_topic" value="labeled_tracks" type="string"/>
+            <param name="filtered_labeled_tracks_topic" value="filtered_labeled_tracks_topic" type="string"/>
+        </node>
     </group>
 
 </launch>
