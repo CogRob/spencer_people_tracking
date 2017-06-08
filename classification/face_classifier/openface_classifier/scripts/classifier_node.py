@@ -30,6 +30,7 @@ class Classifier:
         self.labeled_tracks_topic = rospy.get_param('~labeled_tracks_topic')
         self.clf = None
         self.features = None
+        self.features_loaded = False
         rospy.Subscriber(self.embeddings_topic, PersonEmbeddings, self.track_feature_msg_callback) #subscribes to (track,feature) message
         self.track_person_assoc_pub = rospy.Publisher(self.labeled_tracks_topic, TrackIdentityAssociations, queue_size=10)
         self.server = Server(ClassifierConfig, self.reconfigure_classifier_callback)
@@ -49,6 +50,7 @@ class Classifier:
         # print 'load from ',feature_path
         try:
             self.features = np.load(feature_path)
+            self.features_loaded = True
         except IOError:
             print 'File path for features not exist'
 
@@ -69,7 +71,7 @@ class Classifier:
         nn_product = np.vdot(feature,self.features[ind[0]])
         if nn_product>dot_prod_threshold_unknown:
             feature = np.array([feature])
-            label = str(self.clf.predict(feature))
+            label = str(self.clf.predict(feature)[0])
         else:
             label = 'Unknown'
         return label
@@ -90,7 +92,7 @@ class Classifier:
         with self.lock:
             self.load_model(self.classifier_path)
             self.load_features(self.feature_path)
-            if self.clf and self.features:
+            if self.clf and self.features_loaded:
                 for element in elements:
                     track_assoc = TrackIdentityAssociation()
                     label = self.classify(element.embedding)
