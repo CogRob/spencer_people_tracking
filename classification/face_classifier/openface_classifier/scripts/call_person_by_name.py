@@ -16,8 +16,8 @@ class PersonCaller:
 		self.call_person_topic = rospy.get_param('~call_person_topic')
 		self.track_label_map = {}
 		self.label_track_map = {}
-		self.timeout = rospy.Duration(60*60) #5 minutes. Time after which old entries are cleared from dicts
-		rospy.Subscriber(self.labeled_tracks_topic, TrackIdentityAssociations, self.classified_track_callback) #subscribes to (track,feature) message
+		self.timeout = rospy.Duration(60*60) #60 minutes. Time after which old entries are cleared from dicts
+		rospy.Subscriber(self.labeled_tracks_topic, TrackIdentityAssociations, self.classified_track_callback)
 		self.person_caller_pub = rospy.Publisher(self.call_person_topic, String, queue_size=10)
 
 	def call_person(self, labelled_track):
