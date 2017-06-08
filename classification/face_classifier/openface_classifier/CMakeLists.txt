@@ -13,6 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
 	actionlib_msgs
 	actionlib
 	spencer_vision_msgs
+	spencer_tracking_msgs
 	message_generation
 )
 
@@ -59,6 +60,7 @@ find_package(catkin REQUIRED COMPONENTS
  add_service_files(
    FILES
    TrackLabelAssociationService.srv
+   LabelPoseService.srv
  )
 
 ## Generate actions in the 'action' folder
@@ -71,6 +73,7 @@ generate_messages(
 	DEPENDENCIES
 	actionlib_msgs
 	spencer_vision_msgs
+	spencer_tracking_msgs
 )
 
 ################################################
