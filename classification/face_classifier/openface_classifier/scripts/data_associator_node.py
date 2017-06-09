@@ -19,7 +19,7 @@ from spencer_vision_msgs.msg import (
 	PersonEmbedding,
 	PersonEmbeddings,
 )
-from openface_classifier.srv import *
+from spencer_classification_srv.srv import *
 from collections import defaultdict
 
 class DataAssociator:

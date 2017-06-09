@@ -2,7 +2,7 @@
 import rospy
 import roslib
 import threading
-from openface_classifier.srv import *
+from spencer_classification_srv.srv import *
 from spencer_tracking_msgs.msg import (
     TrackedPerson,
     TrackedPersons,
