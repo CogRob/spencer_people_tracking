@@ -1,3 +1,4 @@
 string label
 ---
 spencer_tracking_msgs/TrackedPerson person
+bool track_found

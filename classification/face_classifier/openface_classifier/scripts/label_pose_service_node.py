@@ -65,11 +65,9 @@ class Label_Pose_Server:
 			if label in self.label_track_map:
 				tracked_person = self.label_track_map[label]
 		if tracked_person:
-			return LabelPoseServiceResponse(tracked_person)
+			return {'person':tracked_person,'track_found':True}
 		else:
-			print 'Label: '+str(label)+' not found'
-			print self.trackid_label_map
-			print self.label_track_map
+			return {'track_found':False}
 
 if __name__ == '__main__':
 	rospy.init_node('label_pose_service_node')
