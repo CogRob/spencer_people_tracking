@@ -19,6 +19,16 @@ from spencer_vision_msgs.msg import (
 import pickle
 import numpy as np
 import os
+import errno
+
+def mkdir_p(path):
+    try:
+        os.makedirs(path)
+    except OSError as exc:  # Python >2.5
+        if exc.errno == errno.EEXIST and os.path.isdir(path):
+            pass
+        else:
+            raise
 
 class Trainer:
 	# create messages that are used to publish feedback/result
@@ -78,6 +88,9 @@ class Trainer:
 		clf.fit(features,labels)
 
 		#Saving features, labels and classifier
+		mkdir_p(os.path.dirname(self.classifier_path))
+		mkdir_p(os.path.dirname(self.feature_path))
+		mkdir_p(os.path.dirname(self.labels_path))
 		np.save(self.feature_path,features)
 		np.save(self.labels_path,labels)
 		with open(self.classifier_path, 'w') as f:
