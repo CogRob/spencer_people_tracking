@@ -5,9 +5,13 @@
     <arg name="dlib_model_path" default="$(find openface_classifier)/config/models/dlib/shape_predictor_68_face_landmarks.dat" />
     <arg name="openface_model_path" default="$(find openface_classifier)/config/models/openface/nn4.small2.v1.t7" />
 
-    <arg name="classifier_path" default="$(find openface_classifier)/config/models/classifier.pkl" />
+<!--     <arg name="classifier_path" default="$(find openface_classifier)/config/models/classifier.pkl" />
     <arg name="feature_path" default="$(find openface_classifier)/config/models/features.npy" />
     <arg name="labels_path" default="$(find openface_classifier)/config/models/labels.npy" />
+ -->
+    <arg name="classifier_path" default="models/classifier.pkl" />
+    <arg name="feature_path" default="models/features.npy" />
+    <arg name="labels_path" default="models/labels.npy" />
 
     <!-- Re-publish detections as syncronized track, for processing by the classifier-->
     <group ns="/spencer/perception_internal/detected_person_association">
