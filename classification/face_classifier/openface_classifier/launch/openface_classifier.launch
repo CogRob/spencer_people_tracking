@@ -2,8 +2,8 @@
     <arg name="input" default="/spencer/perception_internal/detected_persons/rgbd_front_top/upper_body"/>
     <arg name="output" default="/spencer/perception_internal/detected_persons_syncronized/rgbd_front_top/upper_body"/>
 
-    <arg name="dlib_model_path" default="$(find openface_classifier)/config/models/dlib/shape_predictor_68_face_landmarks.dat" />
-    <arg name="openface_model_path" default="$(find openface_classifier)/config/models/openface/nn4.small2.v1.t7" />
+    <arg name="dlib_model_path" default="models/dlib/shape_predictor_68_face_landmarks.dat" />
+    <arg name="openface_model_path" default="models/openface/nn4.small2.v1.t7" />
 
 <!--     <arg name="classifier_path" default="$(find openface_classifier)/config/models/classifier.pkl" />
     <arg name="feature_path" default="$(find openface_classifier)/config/models/features.npy" />
@@ -38,7 +38,7 @@
 
     <!-- Re-publish detections as syncronized track, for processing by the classifier-->
     <group ns="/spencer/classification_internal/classified_tracks">
-        <node name="face_embedder" type="face_embedder_node.py" pkg="openface_classifier">
+        <node name="face_embedder" type="face_embedder_node.py" pkg="openface_classifier" output="screen">
             <param name="dlib_model_path" value="$(arg dlib_model_path)" type="string"/>
             <param name="openface_model_path" value="$(arg openface_model_path)" type="string"/>
 
@@ -49,7 +49,7 @@
         </node>
 
 
-        <node name="classifier" type="classifier_node.py" pkg="openface_classifier">
+        <node name="classifier" type="classifier_node.py" pkg="openface_classifier" output="screen">
             <param name="classifier_path" value="$(arg classifier_path)" type="string"/>
             <param name="feature_path" value="$(arg feature_path)" type="string"/>
 

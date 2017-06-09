@@ -28,13 +28,13 @@ class Label_Pose_Server:
 			print 'tracks_with_pose_callback:',tracked_persons
 			for tracked_person in tracked_persons.tracks:
 				track_id = tracked_person.track_id
-				print track_id
-				print self.trackid_label_map
+				#print track_id
+				#print self.trackid_label_map
 				if track_id in self.trackid_label_map: #if track_id is associated to a person
 					label = self.trackid_label_map[track_id]
 					self.label_track_map[label] = tracked_person #update trackedperson object corresponding to label
 
-					print self.label_track_map
+					#print self.label_track_map
 
 
 	def labeled_tracks_callback(self,labelled_tracks):
@@ -44,7 +44,7 @@ class Label_Pose_Server:
 				label = labelled_track.person_name
 				track_id = labelled_track.track_id
 				if label!='Unknown':
-					print '(track_id,label):',(track_id,label)
+					#print '(track_id,label):',(track_id,label)
 					#remove old entry logic
 					remove_ids = []
 					for iter_id in self.trackid_label_map:
@@ -54,7 +54,7 @@ class Label_Pose_Server:
 						del self.trackid_label_map[iter_id]
 					
 					self.trackid_label_map[track_id] = label
-			print self.trackid_label_map
+			#print self.trackid_label_map
 
 
 	def label_pose_service_callback(self,request):
