@@ -25,8 +25,8 @@ class Label_Pose_Server:
 
 	def tracks_with_pose_callback(self,tracked_persons):
 		with self.lock:
-			print 'tracks_with_pose_callback:',tracked_persons
-			for tracked_person in tracked_persons.tracks:
+			#print 'tracks_with_pose_callback:',tracked_persons
+                        for tracked_person in tracked_persons.tracks:
 				track_id = tracked_person.track_id
 				#print track_id
 				#print self.trackid_label_map

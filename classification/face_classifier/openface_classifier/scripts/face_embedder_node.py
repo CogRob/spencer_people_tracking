@@ -107,7 +107,7 @@ class face_embedder:
             print(e)
             return
         print('time_sync_callback')
-
+        print('length of trackedPersons.tracks',len(trackedPersons.tracks))
         annotations = {}
         for i, annotation in enumerate(annotatedFrame.annotations):
             annotations[annotation.id] = annotation
