@@ -52,15 +52,17 @@ def detectedPersonsCallback(trackAssociation, detectedPersons, syncronized_perso
             detectionId = detectedPerson.detection_id
             trackId = trackAssociation.lookupTrackId(detectionId) # <-- this is what this is all about
             output += "\n[det %d --> track %s]" % (detectionId, str(trackId))
-            if trackId:
+            if trackId is not None:
                 syncronizedPerson = TrackedPerson()
                 syncronizedPerson.track_id = trackId
                 syncronizedPerson.detection_id = detectionId
-                syncronizedPersons.tracks.append(syncronizedPerson)
+                syncronizedPersons.tracks.append(syncronizedPerson) 
+        
+        if len(syncronizedPersons.tracks)>0:
+            syncronized_person_pub.publish(syncronizedPersons)
     else:
         output += "Empty set of detections!"
 
-    syncronized_person_pub.publish(syncronizedPersons)
     rospy.loginfo(output)
 
 
