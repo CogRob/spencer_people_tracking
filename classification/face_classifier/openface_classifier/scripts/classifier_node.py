@@ -43,6 +43,7 @@ class Classifier:
         try:
             with open(classifier_path, 'r') as f:
                 self.clf = pickle.load(f)
+                print 'classifier loaded'
         except IOError:
             print 'File path for classifier not exist'
 
@@ -50,6 +51,7 @@ class Classifier:
         # print 'load from ',feature_path
         try:
             self.features = np.load(feature_path)
+            print 'Features loaded'
             self.features_loaded = True
         except IOError:
             print 'File path for features not exist'
@@ -100,6 +102,7 @@ class Classifier:
                     track_assoc.detection_id = element.detection_id
                     track_assoc.person_name = label
                     track_assocs.tracks.append(track_assoc)
+                    print 'track_id: '+str(element.track_id)+' detection_id: '+str(element.detection_id)+' label: '+label
                 self.track_person_assoc_pub.publish(track_assocs)
             else:
                 print 'No model initialised'
