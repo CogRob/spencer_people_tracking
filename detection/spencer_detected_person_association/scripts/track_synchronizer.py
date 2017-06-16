@@ -57,13 +57,13 @@ def detectedPersonsCallback(trackAssociation, detectedPersons, syncronized_perso
                 syncronizedPerson.track_id = trackId
                 syncronizedPerson.detection_id = detectionId
                 syncronizedPersons.tracks.append(syncronizedPerson) 
-        
+        rospy.loginfo(output)      
         if len(syncronizedPersons.tracks)>0:
             syncronized_person_pub.publish(syncronizedPersons)
     else:
         output += "Empty set of detections!"
 
-    rospy.loginfo(output)
+    
 
 
 if __name__ == '__main__':
