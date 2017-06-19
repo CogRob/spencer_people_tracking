@@ -57,15 +57,17 @@ class DataAssociator:
 
 		if shouldSendGoal:
 			self.actionlibClient.send_goal(goal)
+			print 'Features sent from data_associator to trainer'
 			print(goal)
 			# self.actionlibClient.wait_for_result(rospy.Duration.from_sec(5.0))
 			for key in keys_removed:
 				del self.requests_map[key]
 
 	def track_feature_msg_callback(self, personEmbeddings):
-		print 'track_feature subscriber callback'
+		
 		with self.lock:
-			# Loop over each track embedding
+			print 'track_feature subscriber callback: num_embeddings'+str(len(personEmbeddings.elements))
+		 	#Loop over each track embedding
 			for personEmbedding in personEmbeddings.elements:
 				track_id = personEmbedding.track_id
 				embedding = personEmbedding.embedding
