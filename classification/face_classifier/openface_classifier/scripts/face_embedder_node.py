@@ -120,7 +120,10 @@ class face_embedder:
             track_id = track.track_id
             detection_id = track.detection_id
             try:
-                trackAnnotations[track_id] = annotations[detection_id]
+		if detection_id in annotations:
+                	trackAnnotations[track_id] = annotations[detection_id]
+		else:
+			print('detection_id:',detection_id,'not found in annotations')
             except:
                 continue
 
