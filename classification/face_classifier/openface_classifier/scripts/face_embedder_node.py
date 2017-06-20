@@ -107,6 +107,9 @@ class face_embedder:
             print(e)
             return
         print('time_sync_callback')
+	print('image_timestamp:',image.header.stamp.secs,' secs ',image.header.stamp.nsecs,' nsecs')
+	print('annotatedFrame timestamp:',annotatedFrame.header.stamp.secs,' secs ',annotatedFrame.header.stamp.nsecs,' nsecs')
+	print('trackedPersons timestamp:',trackedPersons.header.stamp.secs,' secs ',annotatedFrame.header.stamp.nsecs,' nsecs')
         print('length of trackedPersons.tracks',len(trackedPersons.tracks))
         annotations = {}
         for i, annotation in enumerate(annotatedFrame.annotations):
@@ -170,6 +173,7 @@ class face_embedder:
                         personEmbedding.detection_id = annotation.id
                         personEmbedding.embedding = rep
                         personEmbeddings.elements.append(personEmbedding)
+	    print('total embeddings for all tracks before being published by face_embedder:',len(personEmbeddings.elements))
             if len(personEmbeddings.elements) > 0:
                 self.embedding_pub.publish(personEmbeddings)
         else:
